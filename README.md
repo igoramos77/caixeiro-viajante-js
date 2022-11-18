@@ -29,3 +29,11 @@ E [12, 27, 14, 38, 0]
 ## Arquitetura
 
 Sistema desenvolvido utilizando Javascript. 
+
+## Grupo
+
+Igor Brown, Matheus Telles, Davi Bernardo, Breno Cocheto, João Vitor, João Marcos, Vinicius Almeida, Rai Menezes. 
+
+## Disciplina
+
+Análise e Complexidade de Algoritmos - Tassio Sirqueira

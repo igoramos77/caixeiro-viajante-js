@@ -12,38 +12,38 @@ function PCVOtimo() {
   *   total da melhor rota 
   */
   const melhorCaminho = (Grafo, refPMCMR, permutacao) => {
-      var cid1, cid2, custo
-      const proxDaRota = new Array(refPMCMR.melhorRota.length); // Sequencia de cidades de uma rota. Indice = cidade; Valor = prox. da rota
+    var cid1, cid2, custo
+    const proxDaRota = new Array(refPMCMR.melhorRota.length); // Sequencia de cidades de uma rota. Indice = cidade; Valor = prox. da rota
 
-      // Monta uma rota com a permutação. A primeira cidade é a 0
-      cid1 = 0
-      cid2 = permutacao[1]
-      custo = Grafo[cid1][cid2]
+    // Monta uma rota com a permutação. A primeira cidade é a 0
+    cid1 = 0
+    cid2 = permutacao[1]
+    custo = Grafo[cid1][cid2]
+    proxDaRota[cid1] = cid2
+
+    for (let j = 2; j < refPMCMR.melhorRota.length; j++) {
+      cid1 = cid2
+      cid2 = permutacao[j]
+      custo += Grafo[cid1][cid2]
       proxDaRota[cid1] = cid2
+    }
 
-      for (let j = 2; j < refPMCMR.melhorRota.length; j++) {
-          cid1 = cid2
-          cid2 = permutacao[j]
-          custo += Grafo[cid1][cid2]
-          proxDaRota[cid1] = cid2
+    // Retorno a cidade inicial e fim do cliclo da viajem
+    proxDaRota[cid2] = 0
+    custo += Grafo[cid2][0] // Custo total
+
+    // Busca o menor custo e guarda a melhor rota
+    if (custo < refPMCMR.melhorCusto) {
+      refPMCMR.melhorCusto = custo
+      cid2 = 0
+      for (let k = 0; k < refPMCMR.melhorRota.length; k++) {
+        cid1 = cid2
+        cid2 = proxDaRota[cid1]
+        refPMCMR.melhorRota[k].cidade1 = cid1
+        refPMCMR.melhorRota[k].cidade2 = cid2
+        refPMCMR.melhorRota[k].custo = Grafo[cid1][cid2]
       }
-
-      // Retorno a cidade inicial e fim do cliclo da viajem
-      proxDaRota[cid2] = 0
-      custo += Grafo[cid2][0] // Custo total
-
-      // Busca o menor custo e guarda a melhor rota
-      if (custo < refPMCMR.melhorCusto) {
-          refPMCMR.melhorCusto = custo
-          cid2 = 0
-          for (let k = 0; k < refPMCMR.melhorRota.length; k++) {
-              cid1 = cid2
-              cid2 = proxDaRota[cid1]
-              refPMCMR.melhorRota[k].cidade1 = cid1
-              refPMCMR.melhorRota[k].cidade2 = cid2
-              refPMCMR.melhorRota[k].custo = Grafo[cid1][cid2]
-          }
-      }
+    }
   }
 
   /*  
@@ -53,21 +53,21 @@ function PCVOtimo() {
   *   menor custo.
   */
   const permuta = (permutacao, Grafo, refPMCMR, controle, k) => {
-      var i
-      permutacao[k] = ++controle
+    var i
+    permutacao[k] = ++controle
 
-      if (controle == (refPMCMR.melhorRota.length - 1)) {
-          melhorCaminho(Grafo, refPMCMR, permutacao)
-      } else {
-          for (i = 1; i < refPMCMR.melhorRota.length; i++) {
-              if (permutacao[i] == 0) {
-                  permuta(permutacao, Grafo, refPMCMR, controle, i)
-              }
-          }
+    if (controle == (refPMCMR.melhorRota.length - 1)) {
+      melhorCaminho(Grafo, refPMCMR, permutacao)
+    } else {
+      for (i = 1; i < refPMCMR.melhorRota.length; i++) {
+        if (permutacao[i] == 0) {
+          permuta(permutacao, Grafo, refPMCMR, controle, i)
+        }
       }
+    }
 
-      controle--
-      permutacao[k] = 0
+    controle--
+    permutacao[k] = 0
   }
 
   /*
@@ -75,25 +75,25 @@ function PCVOtimo() {
   *   na rota da viagem do caixeiro e escolhe a melhor rota entre todas.
   */
   this.geraEscolheCaminhos = (Grafo, refPMCMR) => {
-      var controle = -1
-      refPMCMR.melhorCusto = Infinity
+    var controle = -1
+    refPMCMR.melhorCusto = Infinity
 
-      for (let i = 0; i < refPMCMR.melhorRota.length; i++) {
-          refPMCMR.melhorRota[i] = new Rota();
-      }
+    for (let i = 0; i < refPMCMR.melhorRota.length; i++) {
+      refPMCMR.melhorRota[i] = new Rota();
+    }
 
-      permuta(refPMCMR.permutacao, Grafo, refPMCMR, controle, 1)
+    permuta(refPMCMR.permutacao, Grafo, refPMCMR, controle, 1)
   }
 
   // Imprime o resultado da operação
   this.imprimeMelhorCaminho = (refPMCMR) => {
 
-      console.log('\nCusto minimo para a viajem do caixeiro: ' + refPMCMR.melhorCusto)
-      console.log('melhor caminho para a viajem do caixeiro:\n')
-      console.log('--- De ------ P/ ------ Custo')
-      for (let i = 0; i < refPMCMR.melhorRota.length; i++) {
-          console.log(`--- ${refPMCMR.melhorRota[i].cidade1} ------- ${refPMCMR.melhorRota[i].cidade2} ------- ${refPMCMR.melhorRota[i].custo}`)
-      }
+    console.log('\nCusto minimo para a viajem do caixeiro: ' + refPMCMR.melhorCusto)
+    console.log('melhor caminho para a viajem do caixeiro:\n')
+    console.log('--- De ------ P/ ------ Custo')
+    for (let i = 0; i < refPMCMR.melhorRota.length; i++) {
+      console.log(`--- ${refPMCMR.melhorRota[i].cidade1} ------- ${refPMCMR.melhorRota[i].cidade2} ------- ${refPMCMR.melhorRota[i].custo}`)
+    }
   }
 }
 
@@ -112,15 +112,15 @@ function start(Grafo) {
   *   e melhorRota por referencia
   */
   const refPMCMR = {
-      permutacao,
-      melhorCusto,
-      melhorRota
+    permutacao,
+    melhorCusto,
+    melhorRota
   }
 
   // Inicializa todos os valores de permutação com 0. 
   // (Em js, um vetor que não foi inicializado retorna undefined em todas os indices)
   for (let i = 0; i < refPMCMR.permutacao.length; i++) {
-      refPMCMR.permutacao[i] = 0
+    refPMCMR.permutacao[i] = 0
   }
 
   caixeiro.geraEscolheCaminhos(Grafo, refPMCMR)
@@ -130,11 +130,11 @@ function start(Grafo) {
 // Os indices i e j representam os vertices. Ja os valores v[i][j], representam o custo entre estes vertices.
 
 const Grafo = [
-[0, 10, 15, 5, 12],
-[10, 0, 70, 52, 27],
-[15, 70, 0, 120, 14],
-[5, 52, 120, 0, 38],
-[12, 27, 14, 38, 0]
+  [0, 10, 15, 5, 12],
+  [10, 0, 70, 52, 27],
+  [15, 70, 0, 120, 14],
+  [5, 52, 120, 0, 38],
+  [12, 27, 14, 38, 0]
 ];
 
 
